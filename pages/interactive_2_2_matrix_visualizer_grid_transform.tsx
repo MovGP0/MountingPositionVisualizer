@@ -35,7 +35,11 @@ function degToRad(deg: number) {
   return (deg * Math.PI) / 180;
 }
 
-function eigen2x2(a: number, b: number, c: number, d: number) {
+type EigenResult =
+  | { complex: true; real: number; imag: number }
+  | { complex: false; lambdas: readonly [number, number]; v1: readonly [number, number]; v2: readonly [number, number] };
+
+function eigen2x2(a: number, b: number, c: number, d: number): EigenResult {
   const trace = a + d;
   const determinant = a * d - b * c;
   const discriminant = trace * trace - 4 * determinant;
@@ -126,7 +130,7 @@ export default function MatrixVisualizer() {
 
   // Grid drawing helpers
   const gridLines = useMemo(() => {
-    const lines: JSX.Element[] = [];
+    const lines: React.ReactElement[] = [];
     const maxPix = Math.max(WIDTH, HEIGHT);
     const maxUnits = Math.ceil(maxPix / scale);
     for (let i = -maxUnits; i <= maxUnits; i++) {
@@ -136,7 +140,7 @@ export default function MatrixVisualizer() {
       lines.push(<line key={`h-${i}`} x1={0} y1={y} x2={WIDTH} y2={y} className="stroke-gray-200" strokeWidth={1} />);
     }
     return lines;
-  }, [scale]);
+  }, [scale, centerX, centerY]);
 
   const axes = (
     <g>
@@ -171,16 +175,16 @@ export default function MatrixVisualizer() {
     results.push({ name: "hue(0,-1) ≈ 270°", pass: Math.abs(hueForPoint(0, -1) - 270) < 1e-6 });
 
     // 4) Eigen for rotation 90° → complex ±i
-    const eR = eigen2x2(r[0], r[1], r[2], r[3]);
-    results.push({ name: "eig(R90) is complex", pass: (eR as any).complex === true });
+  const eR = eigen2x2(r[0], r[1], r[2], r[3]);
+  results.push({ name: "eig(R90) is complex", pass: eR.complex === true });
 
     // 5) Eigen for diag(2,3) → real 2,3
     const S = [2, 0, 0, 3] as const;
     const eS = eigen2x2(S[0], S[1], S[2], S[3]);
-    if ((eS as any).complex) {
+    if (eS.complex) {
       results.push({ name: "eig(diag(2,3)) real", pass: false, details: "returned complex" });
     } else {
-      const lambdas = (eS as any).lambdas as number[];
+      const lambdas = eS.lambdas;
       const set = new Set(lambdas.map((x) => Math.round(x * 1000) / 1000));
       const ok = set.has(2) && set.has(3);
       results.push({ name: "eig(diag(2,3)) = {2,3}", pass: ok });
@@ -244,7 +248,7 @@ export default function MatrixVisualizer() {
                 {eigen.complex ? (
                   <div>eigenvalues: {eigen.real.toFixed(3)} ± {eigen.imag.toFixed(3)}i</div>
                 ) : (
-                  <div>eigenvalues: {(eigen.lambdas as number[])[0].toFixed(3)}, {(eigen.lambdas as number[])[1].toFixed(3)}</div>
+                  <div>eigenvalues: {eigen.lambdas[0].toFixed(3)}, {eigen.lambdas[1].toFixed(3)}</div>
                 )}
               </div>
             </div>
@@ -269,7 +273,7 @@ export default function MatrixVisualizer() {
                   <div>[{matrixC.toFixed(3)}]</div>
                   <div>[{matrixD.toFixed(3)}]</div>
                 </div>
-                <div className="text-xs text-muted-foreground">Applied as (x', y') = M·(x, y) + (tₓ, tᵧ).</div>
+                <div className="text-xs text-muted-foreground">Applied as (x&apos;, y&apos;) = M·(x, y) + (tₓ, tᵧ).</div>
               </div>
 
               {showDiagnostics && (
@@ -331,11 +335,11 @@ export default function MatrixVisualizer() {
                 <g>
                   {(() => {
                     const L = Math.max(WIDTH, HEIGHT) / scale;
-                    const [vx1, vy1] = (eigen as any).v1 as [number, number];
-                    const [vx2, vy2] = (eigen as any).v2 as [number, number];
-                    const lambdas = (eigen as any).lambdas as number[];
+                    const [vx1, vy1] = eigen.v1;
+                    const [vx2, vy2] = eigen.v2;
+                    const lambdas = eigen.lambdas;
 
-                    const drawEigen = (vx: number, vy: number, label: string, key: string) => {
+                    const drawEigen = (vx: number, vy: number, label: string, key: string): React.ReactElement | null => {
                       if (!Number.isFinite(vx) || !Number.isFinite(vy)) return null;
                       const x1 = centerX - vx * L * scale;
                       const y1 = centerY + vy * L * scale;
@@ -349,10 +353,12 @@ export default function MatrixVisualizer() {
                       );
                     };
 
-                    const elems: JSX.Element[] = [];
+                    const elems: React.ReactNode[] = [];
                     if (lambdas && lambdas.length === 2) {
-                      elems.push(drawEigen(vx1, vy1, `λ₁=${lambdas[0].toFixed(3)}`, "e1") as any);
-                      elems.push(drawEigen(vx2, vy2, `λ₂=${lambdas[1].toFixed(3)}`, "e2") as any);
+                      const e1 = drawEigen(vx1, vy1, `λ₁=${lambdas[0].toFixed(3)}`, "e1");
+                      if (e1) elems.push(e1);
+                      const e2 = drawEigen(vx2, vy2, `λ₂=${lambdas[1].toFixed(3)}`, "e2");
+                      if (e2) elems.push(e2);
                     }
                     return elems;
                   })()}
