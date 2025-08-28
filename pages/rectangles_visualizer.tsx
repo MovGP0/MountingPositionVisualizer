@@ -110,7 +110,7 @@ export default function RectanglesVisualizerPage() {
             <input type="range" min={1} max={16} value={count} onChange={(e) => setCount(clampCount(parseInt(e.target.value)))} className="w-full" />
             <div className="text-sm mt-1">{count}</div>
             <div className="flex gap-2 mt-2 flex-wrap">
-              <Button variant="secondary" onClick={() => { setPositions(defaultPositions(16)); setCount(16); }}>Reset to defaults (16)</Button>
+              <Button onClick={() => { setPositions(defaultPositions(16)); setCount(16); }}>Reset to defaults (16)</Button>
               <Button onClick={() => setCount(8)}>Use first 8</Button>
             </div>
           </div>
