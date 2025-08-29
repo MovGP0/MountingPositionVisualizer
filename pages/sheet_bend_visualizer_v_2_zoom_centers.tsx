@@ -108,11 +108,13 @@ export default function SheetBendVisualizer() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [drag, setDrag] = useState<{ sx: number, sy: number, px: number, py: number } | null>(null);
 
+  // Parse centers and invert sign so positive input values move stops LEFT (negative X)
   const centers = useMemo(() => centersCsv
-    .split(/[;,\s]+/)
+    .split(/[;\,\s]+/)
     .map(s => Number(s))
     .filter(n => Number.isFinite(n))
-    .slice(0, 16), [centersCsv]);
+    .slice(0, 16)
+    .map(n => -n), [centersCsv]);
 
   const basePoly = trapezoidByWidth(leftLen, rightLen, sheetWidth, leftStartOffset);
   const moved = translate(basePoly, 0, -feedAlongRight);
@@ -247,7 +249,7 @@ export default function SheetBendVisualizer() {
               <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={stopWidth} min={1}
                      onChange={e => setStopWidth(Number(e.target.value))} />
             </label>
-            <label className="text-sm col-span-2 text-black">Center positions (mm, 2–16; comma/space separated)
+            <label className="text-sm col-span-2 text-black">Center positions (mm, 2–16; comma/space separated, positive = left)
               <input type="text" className="mt-1 w-full border rounded px-2 py-1 text-black" value={centersCsv}
                      onChange={e => setCentersCsv(e.target.value)} />
             </label>
