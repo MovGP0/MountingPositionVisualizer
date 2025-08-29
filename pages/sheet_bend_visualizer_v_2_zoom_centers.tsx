@@ -203,52 +203,52 @@ export default function SheetBendVisualizer() {
   return (
     <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4 p-4">
       <div className="xl:col-span-1 space-y-4">
-        <div className="p-4 rounded-2xl shadow bg-white">
-          <h2 className="text-xl font-semibold mb-3">Sheet geometry (mm)</h2>
+        <div className="p-4 rounded-2xl shadow bg-white text-black">
+          <h2 className="text-xl font-semibold mb-3 text-black">Sheet geometry (mm)</h2>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm">Left side length
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={leftLen}
+            <label className="text-sm text-black">Left side length
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={leftLen}
                      onChange={e => setLeftLen(Number(e.target.value))} />
             </label>
-            <label className="text-sm">Right side length
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={rightLen}
+            <label className="text-sm text-black">Right side length
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={rightLen}
                      onChange={e => setRightLen(Number(e.target.value))} />
             </label>
-            <label className="text-sm col-span-2">Sheet width (normal to sides)
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={sheetWidth}
+            <label className="text-sm col-span-2 text-black">Sheet width (normal to sides)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={sheetWidth}
                      onChange={e => setSheetWidth(Number(e.target.value))} />
             </label>
-            <label className="text-sm col-span-2">Left start offset from right side (along sides)
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={leftStartOffset}
+            <label className="text-sm col-span-2 text-black">Left start offset from right side (along sides)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={leftStartOffset}
                      onChange={e => setLeftStartOffset(Number(e.target.value))} />
             </label>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl shadow bg-white">
-          <h2 className="text-xl font-semibold mb-3">Bend setup</h2>
+        <div className="p-4 rounded-2xl shadow bg-white text-black">
+          <h2 className="text-xl font-semibold mb-3 text-black">Bend setup</h2>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm">Angle (deg)
-              <input type="number" step={0.1} className="mt-1 w-full border rounded px-2 py-1" value={angleDeg}
+            <label className="text-sm text-black">Angle (deg)
+              <input type="number" step={0.1} className="mt-1 w-full border rounded px-2 py-1 text-black" value={angleDeg}
                      onChange={e => setAngleDeg(Number(e.target.value))} />
             </label>
-            <label className="text-sm">Forward along right side (mm)
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={feedAlongRight}
+            <label className="text-sm text-black">Forward along right side (mm)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={feedAlongRight}
                      onChange={e => setFeedAlongRight(Number(e.target.value))} />
             </label>
             <div className="col-span-2 text-xs text-black">Bending line is horizontal at y=0. The sheet is translated so the point on the right edge at this distance lies on the line, then rotated around the intersection of the rectangle&#39;s right edge and the bending line.</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl shadow bg-white">
-          <h2 className="text-xl font-semibold mb-3">Stop points</h2>
+        <div className="p-4 rounded-2xl shadow bg-white text-black">
+          <h2 className="text-xl font-semibold mb-3 text-black">Stop points</h2>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm">Width (mm)
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={stopWidth} min={1}
+            <label className="text-sm text-black">Width (mm)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={stopWidth} min={1}
                      onChange={e => setStopWidth(Number(e.target.value))} />
             </label>
-            <label className="text-sm col-span-2">Center positions (mm, 2–16; comma/space separated)
-              <input type="text" className="mt-1 w-full border rounded px-2 py-1" value={centersCsv}
+            <label className="text-sm col-span-2 text-black">Center positions (mm, 2–16; comma/space separated)
+              <input type="text" className="mt-1 w-full border rounded px-2 py-1 text-black" value={centersCsv}
                      onChange={e => setCentersCsv(e.target.value)} />
             </label>
             <div className="col-span-2 text-xs text-black">Each rectangle is centered at the given X, axis-aligned, and pushed upward until its bottom touches the sheet polygon at the lowest contact point across its width.</div>
