@@ -1,0 +1,57 @@
+<!-- SVG Filter for Glass Distortion -->
+<svg style="display: none">
+  <filter id="glass-distortion">
+    <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="77" />
+  </filter>
+</svg>
+
+<div class="glass-toggle-group">
+  <!-- Toggle 1 -->
+  <label class="glass-toggle">
+    <input type="checkbox" class="toggle-input">
+    <div class="toggle-track">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="toggle-thumb">
+        <div class="glass-filter"></div>
+        <div class="glass-overlay"></div>
+        <div class="glass-specular"></div>
+      </div>
+    </div>
+    <span class="toggle-label">Dark Mode</span>
+  </label>
+
+  <!-- Toggle 2 -->
+  <label class="glass-toggle">
+    <input type="checkbox" class="toggle-input" checked>
+    <div class="toggle-track">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="toggle-thumb">
+        <div class="glass-filter"></div>
+        <div class="glass-overlay"></div>
+        <div class="glass-specular"></div>
+      </div>
+    </div>
+    <span class="toggle-label">Notifications</span>
+  </label>
+
+  <!-- Toggle 3 -->
+  <label class="glass-toggle">
+    <input type="checkbox" class="toggle-input">
+    <div class="toggle-track">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="toggle-thumb">
+        <div class="glass-filter"></div>
+        <div class="glass-overlay"></div>
+        <div class="glass-specular"></div>
+      </div>
+    </div>
+    <span class="toggle-label">Auto Update</span>
+  </label>
+</div>

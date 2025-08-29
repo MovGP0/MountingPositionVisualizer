@@ -1,0 +1,130 @@
+/* Glass Dropdown List Container */
+.glass-dropdown-list {
+  --bg-color: rgba(255, 255, 255, 0.25);
+  --highlight: rgba(255, 255, 255, 0.75);
+  --text: #ffffff;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Glass Dropdown Item */
+.glass-dropdown {
+  position: relative;
+}
+
+/* Hide checkbox but keep it accessible */
+.dropdown-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  position: relative;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.glass-filter,
+.glass-overlay,
+.glass-specular {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.glass-filter {
+  z-index: 1;
+  backdrop-filter: blur(4px);
+  filter: url(#glass-distortion) saturate(120%) brightness(1.15);
+}
+
+.glass-overlay {
+  z-index: 2;
+  background: var(--bg-color);
+}
+
+.glass-specular {
+  z-index: 3;
+  box-shadow: inset 1px 1px 1px var(--highlight);
+}
+
+.glass-content {
+  position: relative;
+  z-index: 4;
+  padding: 16px;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Dropdown Arrow */
+.dropdown-arrow {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+/* Dropdown Content */
+.dropdown-content {
+  position: relative;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.dropdown-content .glass-content {
+  padding: 0 16px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+/* Dropdown Open State */
+.dropdown-toggle:checked ~ .dropdown-header .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-toggle:checked ~ .dropdown-content {
+  max-height: 200px;
+}
+
+.dropdown-toggle:checked ~ .dropdown-content .glass-content {
+  padding: 16px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Content Styling */
+.dropdown-content ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-content li {
+  margin: 8px 0;
+}
+
+/* Hover Effects */
+.dropdown-header:hover .glass-overlay {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .glass-dropdown-list {
+    --bg-color: rgba(0, 0, 0, 0.25);
+    --highlight: rgba(255, 255, 255, 0.15);
+  }
+}

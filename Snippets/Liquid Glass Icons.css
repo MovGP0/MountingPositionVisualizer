@@ -1,0 +1,81 @@
+/* Glass Icons Grid */
+.glass-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 24px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.glass-icon {
+  --bg-color: rgba(255, 255, 255, 0.25);
+  --highlight: rgba(255, 255, 255, 0.75);
+  --icon-color: #ffffff;
+  --icon-size: 64px;
+  
+  position: relative;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.glass-icon:hover {
+  transform: scale(1.1);
+}
+
+.glass-filter,
+.glass-overlay,
+.glass-specular {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.glass-filter {
+  z-index: 1;
+  backdrop-filter: blur(4px);
+  filter: url(#glass-distortion) saturate(120%) brightness(1.15);
+}
+
+.glass-overlay {
+  z-index: 2;
+  background: var(--bg-color);
+}
+
+.glass-specular {
+  z-index: 3;
+  box-shadow: inset 1px 1px 1px var(--highlight);
+}
+
+.glass-content {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.glass-content svg {
+  width: 80%;
+  height: 80%;
+  color: var(--icon-color);
+  transition: transform 0.2s ease;
+}
+
+.glass-icon:hover .glass-content svg {
+  transform: scale(0.9);
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .glass-icon {
+    --bg-color: rgba(0, 0, 0, 0.25);
+    --highlight: rgba(255, 255, 255, 0.15);
+  }
+}

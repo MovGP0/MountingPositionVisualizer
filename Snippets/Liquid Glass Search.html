@@ -1,0 +1,35 @@
+<!-- Font Awesome Icons; Make sure to add it in the <head> tag -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- SVG Filter for Glass Distortion -->
+<svg style="display: none">
+  <filter id="glass-distortion">
+    <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="77" />
+  </filter>
+</svg>
+
+<div class="glass-search">
+  <div class="glass-filter"></div>
+  <div class="glass-overlay"></div>
+  <div class="glass-specular"></div>
+  <div class="glass-content">
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search..." class="search-input">
+      <button class="search-clear" aria-label="Clear search">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="search-suggestions">
+      <div class="suggestion-group">
+        <h4>Recent Searches</h4>
+        <ul>
+          <li><i class="fas fa-history"></i>Glass effect components</li>
+          <li><i class="fas fa-history"></i>Modern UI design</li>
+          <li><i class="fas fa-history"></i>CSS animations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

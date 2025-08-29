@@ -1,0 +1,86 @@
+<!-- SVG Filter for Glass Distortion -->
+<svg style="display: none">
+  <filter id="glass-distortion">
+    <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="77" />
+  </filter>
+</svg>
+
+<div class="glass-dropdown-list">
+  <!-- Item 1 -->
+  <div class="glass-dropdown">
+    <input type="checkbox" id="dropdown1" class="dropdown-toggle">
+    <label for="dropdown1" class="dropdown-header">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <span>Features</span>
+        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+    </label>
+    <div class="dropdown-content">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <ul>
+          <li>Modern Design</li>
+          <li>Smooth Animations</li>
+          <li>Pure CSS</li>
+          <li>Responsive Layout</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 2 -->
+  <div class="glass-dropdown">
+    <input type="checkbox" id="dropdown2" class="dropdown-toggle">
+    <label for="dropdown2" class="dropdown-header">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <span>Documentation</span>
+        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+    </label>
+    <div class="dropdown-content">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <p>This is a pure CSS implementation of a glass-style dropdown/accordion. No JavaScript required!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 3 -->
+  <div class="glass-dropdown">
+    <input type="checkbox" id="dropdown3" class="dropdown-toggle">
+    <label for="dropdown3" class="dropdown-header">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <span>Support</span>
+        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+    </label>
+    <div class="dropdown-content">
+      <div class="glass-filter"></div>
+      <div class="glass-overlay"></div>
+      <div class="glass-specular"></div>
+      <div class="glass-content">
+        <p>Need help? Contact our support team for assistance.</p>
+      </div>
+    </div>
+  </div>
+</div>

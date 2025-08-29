@@ -1,0 +1,21 @@
+<!-- SVG Filter for Glass Distortion -->
+<svg style="display: none">
+  <filter id="glass-distortion">
+    <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves="2" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="77" />
+  </filter>
+</svg>
+
+<nav class="glass-nav">
+  <div class="glass-filter"></div>
+  <div class="glass-overlay"></div>
+  <div class="glass-specular"></div>
+  <div class="glass-content">
+    <ul class="nav-list">
+      <li><a href="#" class="nav-item active">Home</a></li>
+      <li><a href="#" class="nav-item">About</a></li>
+      <li><a href="#" class="nav-item">Services</a></li>
+      <li><a href="#" class="nav-item">Contact</a></li>
+    </ul>
+  </div>
+</nav>
