@@ -31,14 +31,14 @@ function bbox(points: Pt[]) {
   return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
 }
 
-function trapezoid(leftLen: number, rightLen: number, sideOffset: number): Pt[] {
-  // Left & right sides are parallel (vertical in local coords). sideOffset is the horizontal distance between them.
-  // Bottoms are aligned (y=0). Top edge slants if leftLen != rightLen.
+function trapezoidByWidth(leftLen: number, rightLen: number, sheetWidth: number, leftStartOffset: number): Pt[] {
+  // Right side reference at x = 0 from y = 0 (bottom) to y = rightLen (top).
+  // Left side at x = -sheetWidth, shifted by leftStartOffset along the sides direction (vertical).
   return [
-    { x: 0, y: 0 },               // bottom-left
-    { x: 0, y: leftLen },         // top-left
-    { x: sideOffset, y: rightLen }, // top-right
-    { x: sideOffset, y: 0 }       // bottom-right
+    { x: -sheetWidth, y: leftStartOffset },
+    { x: -sheetWidth, y: leftStartOffset + leftLen },
+    { x: 0, y: rightLen },
+    { x: 0, y: 0 }
   ];
 }
 
@@ -91,7 +91,8 @@ export default function SheetBendVisualizer() {
   // Sheet params (mm)
   const [leftLen, setLeftLen] = useState(350);
   const [rightLen, setRightLen] = useState(300);
-  const [sideOffset, setSideOffset] = useState(260); // horizontal distance between left & right sides
+  const [sheetWidth, setSheetWidth] = useState(260); // width of sheet (normal to sides)
+  const [leftStartOffset, setLeftStartOffset] = useState(0); // vertical offset of left side start from right side start // horizontal distance between left & right sides
 
   // Bend: translate along right side then rotate about pivot (right side of rectangle ∩ bending line)
   const [angleDeg, setAngleDeg] = useState(-12);
@@ -113,9 +114,9 @@ export default function SheetBendVisualizer() {
     .filter(n => Number.isFinite(n))
     .slice(0, 16), [centersCsv]);
 
-  const basePoly = trapezoid(leftLen, rightLen, sideOffset);
+  const basePoly = trapezoidByWidth(leftLen, rightLen, sheetWidth, leftStartOffset);
   const moved = translate(basePoly, 0, -feedAlongRight);
-  const pivot: Pt = { x: sideOffset, y: 0 };
+  const pivot: Pt = { x: 0, y: 0 };
   const sheetPoly = moved.map(p => rotate(p, angleDeg, pivot));
 
   // Stop rectangles from centers
@@ -144,7 +145,7 @@ export default function SheetBendVisualizer() {
   const borderW = border.maxX - border.minX;
   const borderH = border.maxY - border.minY;
 
-  // Fit to border rectangle (memoized for effect dependencies)
+  // Fit to border rectangle (memoized so effect deps stay minimal)
   const fitToScene = useCallback(() => {
     const svg = svgRef.current; if (!svg) return;
     const { width, height } = svg.getBoundingClientRect();
@@ -154,11 +155,9 @@ export default function SheetBendVisualizer() {
     const panY = (height - s * borderH) / 2 + s * border.maxY; // y flips in world-to-screen
     setZoom(s);
     setPan({ x: panX, y: panY });
-  // Only values actually referenced inside are needed (all are referenced, but exhaustive-deps warns about some derived stability).
-  // border.* values are primitives, so include just those used directly for pan calculations.
-  }, [borderW, borderH, border.minX, border.maxY]);
+  }, [border.minX, border.maxY, borderW, borderH]);
 
-  // Auto-fit when geometry changes
+  // Auto-fit when geometry changes (those changes will update border values triggering new callback identity)
   useEffect(() => { fitToScene(); }, [fitToScene]);
 
   function screenToWorld(clientX: number, clientY: number): Pt {
@@ -215,9 +214,13 @@ export default function SheetBendVisualizer() {
               <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={rightLen}
                      onChange={e => setRightLen(Number(e.target.value))} />
             </label>
-            <label className="text-sm col-span-2">Offset between sides (horizontal)
-              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={sideOffset}
-                     onChange={e => setSideOffset(Number(e.target.value))} />
+            <label className="text-sm col-span-2">Sheet width (normal to sides)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={sheetWidth}
+                     onChange={e => setSheetWidth(Number(e.target.value))} />
+            </label>
+            <label className="text-sm col-span-2">Left start offset from right side (along sides)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={leftStartOffset}
+                     onChange={e => setLeftStartOffset(Number(e.target.value))} />
             </label>
           </div>
         </div>
@@ -233,7 +236,7 @@ export default function SheetBendVisualizer() {
               <input type="number" className="mt-1 w-full border rounded px-2 py-1" value={feedAlongRight}
                      onChange={e => setFeedAlongRight(Number(e.target.value))} />
             </label>
-            <div className="col-span-2 text-xs text-gray-600">Bending line is horizontal at y=0. The sheet is translated so the point on the right edge at this distance lies on the line, then rotated around the intersection of the rectangle&apos;s right edge and the bending line.</div>
+            <div className="col-span-2 text-xs text-black">Bending line is horizontal at y=0. The sheet is translated so the point on the right edge at this distance lies on the line, then rotated around the intersection of the rectangle&#39;s right edge and the bending line.</div>
           </div>
         </div>
 
@@ -248,20 +251,20 @@ export default function SheetBendVisualizer() {
               <input type="text" className="mt-1 w-full border rounded px-2 py-1" value={centersCsv}
                      onChange={e => setCentersCsv(e.target.value)} />
             </label>
-            <div className="col-span-2 text-xs text-gray-600">Each rectangle is centered at the given X, axis-aligned, and pushed upward until its bottom touches the sheet polygon at the lowest contact point across its width.</div>
+            <div className="col-span-2 text-xs text-black">Each rectangle is centered at the given X, axis-aligned, and pushed upward until its bottom touches the sheet polygon at the lowest contact point across its width.</div>
           </div>
         </div>
 
         <div className="p-4 rounded-2xl shadow bg-white flex items-center gap-2">
           <button className="px-3 py-2 rounded-xl shadow bg-gray-900 text-white" onClick={fitToScene}>Fit to scene</button>
-          <div className="text-xs text-gray-600">Wheel = zoom, drag = pan.</div>
+          <div className="text-xs text-black">Wheel = zoom, drag = pan.</div>
         </div>
       </div>
 
       <div className="xl:col-span-2 p-4 rounded-2xl shadow bg-white">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-sm text-gray-600">Stops: {centers.length} | Width: {stopWidth} mm</div>
-          <div className="text-sm text-gray-600">Scene border: {borderW.toFixed(0)} × {borderH.toFixed(0)} mm (+100 mm padding)</div>
+          <div className="text-sm text-black">Stops: {centers.length} | Width: {stopWidth} mm</div>
+          <div className="text-sm text-black">Scene border: {borderW.toFixed(0)} × {borderH.toFixed(0)} mm (+100 mm padding)</div>
         </div>
 
         <svg ref={svgRef} width="100%" height="640" className="border rounded-2xl bg-white cursor-grab"
@@ -298,7 +301,7 @@ export default function SheetBendVisualizer() {
           </g>
         </svg>
 
-        <div className="text-xs text-gray-500 mt-2">
+        <div className="text-xs text-black mt-2">
           Notes:
           <ul className="list-disc ml-5">
             <li>Center guide lines and the bending line extend to the scene border rectangle with +100&nbsp;mm padding.</li>
