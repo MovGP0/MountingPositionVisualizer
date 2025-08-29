@@ -97,6 +97,8 @@ export default function SheetBendVisualizer() {
   // Bend: translate along right side then rotate about pivot (right side of rectangle ∩ bending line)
   const [angleDeg, setAngleDeg] = useState(-12);
   const [feedAlongRight, setFeedAlongRight] = useState(40);
+  // NEW: horizontal pre-shift to the left (mm, positive = left)
+  const [leftShift, setLeftShift] = useState(0);
 
   // Stops: shared width, user-provided center positions
   const [stopWidth, setStopWidth] = useState(40);
@@ -117,9 +119,15 @@ export default function SheetBendVisualizer() {
     .map(n => -n), [centersCsv]);
 
   const basePoly = trapezoidByWidth(leftLen, rightLen, sheetWidth, leftStartOffset);
-  const moved = translate(basePoly, 0, -feedAlongRight);
-  const pivot: Pt = { x: 0, y: 0 };
-  const sheetPoly = moved.map(p => rotate(p, angleDeg, pivot));
+  // 1) pre-shift left by `leftShift` (positive = left)
+  const preShifted = translate(basePoly, -leftShift, 0);
+  // Pivot at right side (after pre-shift) ∩ bending line (y=0)
+  const pivotX = bbox(preShifted).maxX;
+  const pivot: Pt = { x: pivotX, y: 0 };
+  // 2) feed forward along the right side (vertical toward bending line)
+  const fed = translate(preShifted, 0, -feedAlongRight);
+  // 3) rotate about pivot
+  const sheetPoly = fed.map(p => rotate(p, angleDeg, pivot));
 
   // Stop rectangles from centers
   const stopRects = centers.map((cx) => {
@@ -230,15 +238,19 @@ export default function SheetBendVisualizer() {
         <div className="p-4 rounded-2xl shadow bg-white text-black">
           <h2 className="text-xl font-semibold mb-3 text-black">Bend setup</h2>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm text-black">Angle (deg)
-              <input type="number" step={0.1} className="mt-1 w-full border rounded px-2 py-1 text-black" value={angleDeg}
-                     onChange={e => setAngleDeg(Number(e.target.value))} />
+            <label className="text-sm text-black">Left shift (mm, + = left)
+              <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={leftShift}
+                     onChange={e => setLeftShift(Number(e.target.value))} />
             </label>
             <label className="text-sm text-black">Forward along right side (mm)
               <input type="number" className="mt-1 w-full border rounded px-2 py-1 text-black" value={feedAlongRight}
                      onChange={e => setFeedAlongRight(Number(e.target.value))} />
             </label>
-            <div className="col-span-2 text-xs text-black">Bending line is horizontal at y=0. The sheet is translated so the point on the right edge at this distance lies on the line, then rotated around the intersection of the rectangle&#39;s right edge and the bending line.</div>
+            <label className="text-sm text-black">Angle (deg)
+              <input type="number" step={0.1} className="mt-1 w-full border rounded px-2 py-1 text-black" value={angleDeg}
+                     onChange={e => setAngleDeg(Number(e.target.value))} />
+            </label>
+            <div className="col-span-2 text-xs text-black">Order: first shift left, then feed vertically to y=0 along the (pre-shifted) right side, then rotate about the intersection of that right border and the bending line.</div>
           </div>
         </div>
 
